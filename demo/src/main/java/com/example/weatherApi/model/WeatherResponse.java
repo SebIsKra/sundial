@@ -1,8 +1,8 @@
-package com.example.weatherApi.controller.WeatherController;
+package com.example.weatherApi.model;
 
 import java.util.List;
 
-import com.example.weatherApi.controller.WeatherController.WeatherResponse.Clouds;
+import com.example.weatherApi.model.WeatherResponse.Clouds;
 
 public class WeatherResponse {
 
@@ -12,8 +12,14 @@ public class WeatherResponse {
     private Clouds clouds;
     
 
-    public Clouds getClouds() { return this.clouds; }
-    public void setClouds(Clouds clouds) { this.clouds = clouds; }
+    public Clouds getClouds(){
+        
+        return this.clouds; 
+    }
+
+    public void setClouds(Clouds clouds){ 
+        this.clouds = clouds; 
+    }
 
     public String getName(){
         return this.name;
@@ -69,7 +75,6 @@ public class WeatherResponse {
     public static class Main{
         
         private double temp;
-        private int clouds;
 
         public double getTemp(){
             return this.temp;
