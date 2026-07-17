@@ -1,0 +1,16 @@
+services:
+  SQL:
+    image: postgres:16
+    container_name: sundial-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sundial
+      POSTGRES_USER: sundial
+      POSTGRES_PASSWORD: sundial
+    ports:
+      - "5432:5432"
+    volumes:
+      - sundial-data:/var/lib/postgresql/data
+
+volumes:
+  sundial-data:
