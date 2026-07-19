@@ -6,24 +6,100 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Weather Icons CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
 </head>
 <body>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-md-8">
+            <div class="card mt-4">
                 <div class="card-body">
-                    <h1 class="card-title text-center">Weather App</h1>
-                    <form action="/weather" method="get">
-                        <div class="form-group">
-                        <input type="text" class="form-control" name="lat" placeholder="Enter latitude (e.g. 52.2297)" required>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h1 class="card-title mb-0">⛅ Weather App</h1>
+                        <a href="/profile" class="btn btn-secondary btn-sm">Profile</a>
                     </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="lon" placeholder="Enter longitude (e.g. 21.0122)" required>
+
+                    <!-- Coordinate form -->
+                    <form action="/weather" method="get" id="weatherForm">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control" id="lat" name="lat"
+                                       placeholder="Latitude (e.g. 52.2297)" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control" id="lon" name="lon"
+                                       placeholder="Longitude (e.g. 21.0122)" required>
+                            </div>
+                        </div>
+
+                        <!-- Geolocation error -->
+                        <div id="geoError" class="alert alert-warning" style="display:none;">
+                            Could not get your location. Please enter coordinates manually.
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col-md-6 mb-2">
+                                <button type="button" class="btn btn-secondary btn-block"
+                                        onclick="getLocation()">
+                                    📍 Use My Location
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    Get Weather
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Loading indicator -->
+                    <div id="loadingMsg" class="alert alert-info mt-3" style="display:none;">
+                        🔍 Finding cafés nearby and checking the sun...
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Get Weather</button>
-                </form>
+
+                    <!-- Map -->
+                    <div id="map" style="height: 500px; width: 100%; border-radius: 8px;
+                                         margin-top: 20px; display:none;"></div>
+
+                    <!-- Legend -->
+                    <div id="legend" class="mt-3" style="display:none;">
+                        <span class="mr-3">
+                            <span style="display:inline-block; width:14px; height:14px;
+                                         background:green; border-radius:50%;
+                                         border:2px solid white; box-shadow:0 0 4px rgba(0,0,0,0.4);
+                                         vertical-align:middle;">
+                            </span>
+                            ☀️ Sunny (cloudiness &lt; 15%)
+                        </span>
+                        <span>
+                            <span style="display:inline-block; width:14px; height:14px;
+                                         background:grey; border-radius:50%;
+                                         border:2px solid white; box-shadow:0 0 4px rgba(0,0,0,0.4);
+                                         vertical-align:middle;">
+                            </span>
+                            🌥️ Too cloudy
+                        </span>
+                    </div>
+
+                    <!-- Café list table -->
+                    <div id="cafeTable" class="mt-4" style="display:none;">
+                        <h5>Cafés nearby</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Opening Hours</th>
+                                    <th>Your Rating</th>
+                                    <th>Sun Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cafeList"></tbody>
+                        </table>
+                    </div>
 
                 </div>
             </div>
@@ -31,9 +107,183 @@
     </div>
 </div>
 
-<!-- Bootstrap JS and dependencies -->
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    let map;
+    let cafeResults = [];
+
+    function getLocation() {
+        if (!navigator.geolocation) {
+            document.getElementById("geoError").style.display = "block";
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                document.getElementById("lat").value = lat.toFixed(4);
+                document.getElementById("lon").value = lon.toFixed(4);
+                document.getElementById("geoError").style.display = "none";
+                document.getElementById("loadingMsg").style.display = "block";
+                document.getElementById("map").style.display = "block";
+
+                initMap(lat, lon);
+                fetchCafes(lat, lon);
+            },
+            function(error) {
+                document.getElementById("geoError").style.display = "block";
+            }
+        );
+    }
+
+    function initMap(lat, lon) {
+        if (map) {
+            map.remove();
+        }
+
+        map = L.map("map").setView([lat, lon], 14);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors"
+        }).addTo(map);
+
+        L.marker([lat, lon])
+            .addTo(map)
+            .bindPopup("📍 You are here")
+            .openPopup();
+
+        L.circle([lat, lon], {
+            radius: 2000,
+            color: "#3388ff",
+            fillOpacity: 0.1
+        }).addTo(map);
+    }
+
+    function fetchCafes(lat, lon) {
+        document.getElementById("loadingMsg").textContent =
+            "🔍 Finding cafés nearby...";
+        document.getElementById("loadingMsg").style.display = "block";
+
+        // Mock café data — swap for Overpass API when network allows
+        const mockCafes = [
+            { name: "Café Einstein Stammhaus", latitude: lat + 0.005, longitude: lon + 0.005, description: "", openingHours: "" },
+            { name: "The Barn Coffee Roasters", latitude: lat - 0.003, longitude: lon + 0.008, description: "", openingHours: "" },
+            { name: "Bonanza Coffee",           latitude: lat + 0.008, longitude: lon - 0.004, description: "", openingHours: "" },
+            { name: "Five Elephant",            latitude: lat - 0.006, longitude: lon - 0.006, description: "", openingHours: "" },
+            { name: "Café Himmelblau",          latitude: lat + 0.010, longitude: lon + 0.002, description: "", openingHours: "" }
+        ];
+
+        checkCafesWithBackend(mockCafes);
+    }
+
+    function checkCafesWithBackend(cafes) {
+        fetch("/cafes/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(cafes)
+        })
+        .then(response => response.json())
+        .then(enrichedCafes => {
+            cafeResults = enrichedCafes;
+            document.getElementById("loadingMsg").style.display = "none";
+            document.getElementById("legend").style.display = "block";
+
+            enrichedCafes.forEach(cafe => addCafeMarker(cafe));
+            renderCafeList(enrichedCafes);
+        })
+        .catch(error => {
+            document.getElementById("loadingMsg").textContent =
+                "⚠️ Could not check weather for cafés.";
+            console.error(error);
+        });
+    }
+
+    function addCafeMarker(cafe) {
+        const isSunny = cafe.sunny;
+        const icon = createColoredIcon(isSunny ? "green" : "grey");
+
+        L.marker([cafe.latitude, cafe.longitude], { icon })
+            .addTo(map)
+            .bindPopup(`
+                <b>${cafe.name}</b><br>
+                ☁️ Cloudiness: ${cafe.cloudiness}%<br>
+                ${cafe.openingHours ? "🕐 " + cafe.openingHours + "<br>" : ""}
+                ${isSunny ? "☀️ Sunny spot!" : "🌥️ Too cloudy"}
+            `);
+    }
+
+    function renderCafeList(cafes) {
+        const container = document.getElementById("cafeList");
+        container.innerHTML = "";
+
+        cafes.forEach((cafe, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><b>${cafe.name}</b></td>
+                <td>${cafe.description || "<i class='text-muted'>No description yet</i>"}</td>
+                <td>${cafe.openingHours || "<i class='text-muted'>Unknown</i>"}</td>
+                <td>
+                    <select class="form-control form-control-sm"
+                            onchange="submitRating(${index}, this.value)">
+                        <option value="0">Rate...</option>
+                        <option value="1">⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                    </select>
+                </td>
+                <td>${cafe.sunny ? "☀️ Sunny" : "🌥️ Cloudy"}</td>
+            `;
+            container.appendChild(row);
+        });
+
+        document.getElementById("cafeTable").style.display = "block";
+    }
+
+    function submitRating(index, rating) {
+        if (rating == 0) return;
+
+        const cafe = cafeResults[index];
+        cafe.rating = parseInt(rating);
+
+        fetch("/cafes/rate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(cafe)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Rating saved for " + cafe.name);
+            }
+        })
+        .catch(error => console.error("Rating save failed:", error));
+    }
+
+    function createColoredIcon(color) {
+        return L.divIcon({
+            className: "",
+            html: `<div style="
+                width: 16px;
+                height: 16px;
+                background: ${color};
+                border-radius: 50%;
+                border: 2px solid white;
+                box-shadow: 0 0 4px rgba(0,0,0,0.4);
+            "></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+    }
+</script>
+
 </body>
 </html>

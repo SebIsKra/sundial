@@ -1,15 +1,15 @@
-package com.example.weatherApi.controller.WeatherController;
+package com.example.weatherApi.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.weatherApi.model.User;
 import com.example.weatherApi.service.UserService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import com.example.weatherApi.model.SavedLocation;
-import com.example.weatherApi.service.UserService;
+import jakarta.servlet.http.HttpSession;
 
 
 @Controller
@@ -46,9 +46,29 @@ public class UserController {
         String username = (String) session.getAttribute("loggedInUser");
         if (username == null) return "redirect:/";
 
-        List<SavedLocation> locations = userService.getSavedLocations(username);
         model.addAttribute("username", username);
-        model.addAttribute("locations", locations);
         return "profile";
     }
+
+    @PostMapping("/register")
+public String register(@RequestParam String username,
+                       @RequestParam String password,
+                       Model model) {
+    boolean success = userService.register(username, password);
+    if (!success) {
+        model.addAttribute("error", "Username already taken.");
+        return "register";
+    }
+    return "redirect:/";
 }
+
+@GetMapping("/register")
+public String showRegister() {
+    return "register";
+}
+
+}
+
+//Hashmap für User benutzen 
+//User eigenschaften gegenspeichern, Sessions mit User-Objekt 
+//Welcher User klickt auf welche bewertung -> normalerweise mit sternebewertung -> User mit Id 1 hat 3 sterne geklickt persistent -> Spring bean um zu welcher User eingeloggt ist -> simuliert spring 
