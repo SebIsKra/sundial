@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "sundial",
+            "request": "launch",
+            "mainClass": "com.example.sundial.sundial",
+            "projectName": ""
+        },
+        {
+            "type": "java",
             "name": "WeatherApplication",
             "request": "launch",
             "mainClass": "com.example.weatherApi.WeatherApplication",
