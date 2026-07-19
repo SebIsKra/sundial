@@ -50,7 +50,7 @@
         }).addTo(map);
     }
 
-    function fetchCafes(lat, lon) {
+    /*function fetchCafes(lat, lon) {
         document.getElementById("loadingMsg").textContent =
             "🔍 Finding cafés nearby...";
         document.getElementById("loadingMsg").style.display = "block";
@@ -65,7 +65,53 @@
         ];
 
         checkCafesWithBackend(mockCafes);
-    }
+    }*/
+    function fetchCafes(lat, lon) {
+    document.getElementById("loadingMsg").textContent =
+        "🔍 Finding cafés nearby...";
+    document.getElementById("loadingMsg").style.display = "block";
+
+    const query = `
+        [out:json][timeout:60];
+        node["amenity"="cafe"](around:2000,${lat},${lon});
+        out body;
+    `;
+
+    const url = "https://overpass-api.de/api/interpreter?data="
+                + encodeURIComponent(query);
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Status " + response.status);
+            return response.json();
+        })
+        .then(data => {
+            if (!data.elements || data.elements.length === 0) {
+                document.getElementById("loadingMsg").textContent =
+                    "No cafés found within 2km.";
+                return;
+            }
+
+            document.getElementById("loadingMsg").textContent =
+                "☀️ Checking sun for " + data.elements.length + " cafés...";
+
+            const cafes = data.elements.map(cafe => ({
+                name:         cafe.tags.name         || "Unnamed Café",
+                description:  cafe.tags.description  || "",
+                openingHours: cafe.tags.opening_hours || "",
+                latitude:     cafe.lat,
+                longitude:    cafe.lon
+            }));
+
+            checkCafesWithBackend(cafes);
+        })
+        .catch(error => {
+            document.getElementById("loadingMsg").textContent =
+                "⚠️ Could not load café data. Try again in a moment.";
+            document.getElementById("loadingMsg").className = "alert alert-warning mt-3";
+            console.error("Overpass error:", error);
+        });
+}
 
     function checkCafesWithBackend(cafes) {
         fetch("/cafes/check", {
