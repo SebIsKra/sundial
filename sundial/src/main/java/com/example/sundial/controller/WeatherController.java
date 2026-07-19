@@ -46,7 +46,7 @@ public class WeatherController {
         String url = "https://api.openweathermap.org/data/2.5/weather"
                    + "?lat=" + lat
                    + "&lon=" + lon
-                   + "&units=metric&lang=en&appid=739a05de68ee3b3295f1de09756a422f";
+                   + "&units=metric&lang=en&appid=";
 
         RestTemplate restTemplate = new RestTemplate();
         WeatherResponse response = restTemplate.getForObject(url, WeatherResponse.class);
