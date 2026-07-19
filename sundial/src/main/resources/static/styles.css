@@ -1,0 +1,296 @@
+/* ─── Google Font ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&display=swap');
+
+/* ─── Root Variables ──────────────────────────────────────── */
+:root {
+    --sun-yellow:     #F9C74F;
+    --warm-orange:    #F4845F;
+    --coffee-brown:   #6B3F2A;
+    --cream:          #FDF6EC;
+    --light-cream:    #FFF9F2;
+    --soft-green:     #90BE6D;
+    --cloudy-grey:    #9E9E9E;
+    --text-dark:      #3B2A1A;
+    --text-muted:     #9E8C7E;
+    --shadow:         0 4px 20px rgba(107, 63, 42, 0.12);
+    --shadow-hover:   0 8px 30px rgba(107, 63, 42, 0.2);
+    --radius:         16px;
+    --radius-sm:      8px;
+}
+
+/* ─── Base ────────────────────────────────────────────────── */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    background-color: var(--cream);
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(249, 199, 79, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(244, 132, 95, 0.10) 0%, transparent 50%);
+    min-height: 100vh;
+    color: var(--text-dark);
+}
+
+/* ─── Typography ──────────────────────────────────────────── */
+h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', serif;
+    color: var(--coffee-brown);
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+p, label, td, th {
+    font-family: 'Lato', sans-serif;
+    color: var(--text-dark);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+    font-style: italic;
+}
+
+/* ─── Container ───────────────────────────────────────────── */
+.container {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+/* ─── Card ────────────────────────────────────────────────── */
+.card {
+    border: none;
+    border-radius: var(--radius);
+    background-color: var(--light-cream);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-title {
+    margin-bottom: 1.5rem;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────── */
+.btn {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease;
+    border: none;
+    letter-spacing: 0.3px;
+}
+
+.btn-primary {
+    background-color: var(--warm-orange);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #e06d47;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(244, 132, 95, 0.4);
+}
+
+.btn-secondary {
+    background-color: var(--coffee-brown);
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #4e2d1e;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 63, 42, 0.3);
+}
+
+.btn-success {
+    background-color: var(--soft-green);
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #74a855;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* ─── Form Controls ───────────────────────────────────────── */
+.form-control {
+    border-radius: var(--radius-sm);
+    border: 1.5px solid #e8d9c8;
+    background-color: #fff;
+    color: var(--text-dark);
+    font-family: 'Lato', sans-serif;
+    padding: 0.6rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--warm-orange);
+    box-shadow: 0 0 0 3px rgba(244, 132, 95, 0.15);
+    outline: none;
+    background-color: #fff;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* ─── Alerts ──────────────────────────────────────────────── */
+.alert {
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+}
+
+.alert-info {
+    background-color: rgba(249, 199, 79, 0.2);
+    color: var(--coffee-brown);
+}
+
+.alert-warning {
+    background-color: rgba(244, 132, 95, 0.15);
+    color: var(--coffee-brown);
+}
+
+.alert-danger {
+    background-color: rgba(220, 80, 60, 0.12);
+    color: #8b2500;
+}
+
+/* ─── Table ───────────────────────────────────────────────── */
+.table {
+    background-color: #fff;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    font-size: 0.92rem;
+}
+
+.table thead th {
+    background-color: var(--coffee-brown);
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    border: none;
+    padding: 0.85rem 1rem;
+    letter-spacing: 0.3px;
+}
+
+.table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(249, 199, 79, 0.08);
+}
+
+.table td {
+    padding: 0.75rem 1rem;
+    border-color: #f0e6d8;
+    vertical-align: middle;
+}
+
+/* ─── Map ─────────────────────────────────────────────────── */
+#map {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-top: 1.5rem;
+}
+
+/* ─── Legend ──────────────────────────────────────────────── */
+#legend {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0;
+}
+
+/* ─── Divider ─────────────────────────────────────────────── */
+hr {
+    border-color: #e8d9c8;
+    margin: 1.5rem 0;
+}
+
+/* ─── Links ───────────────────────────────────────────────── */
+a {
+    color: var(--warm-orange);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--coffee-brown);
+    text-decoration: underline;
+}
+
+/* ─── Sunny / Cloudy status badges ───────────────────────── */
+.badge-sunny {
+    background-color: rgba(249, 199, 79, 0.25);
+    color: #7a5c00;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-cloudy {
+    background-color: rgba(158, 158, 158, 0.2);
+    color: #555;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* ─── Profile page ────────────────────────────────────────── */
+.profile-header {
+    border-bottom: 2px solid #f0e6d8;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ─── Responsive tweaks ───────────────────────────────────── */
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+    }
+}
