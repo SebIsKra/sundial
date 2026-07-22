@@ -1,4 +1,5 @@
 package com.example.sundial.controller;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -6,26 +7,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.sundial.model.CafeLocation;
 import com.example.sundial.model.User;
+import com.example.sundial.repository.CafeLocationRepository;
 import com.example.sundial.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
-
 
 @Controller
 public class UserController {
 
     private final UserService userService;
+    private final CafeLocationRepository cafeLocationRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CafeLocationRepository cafeLocationRepository) {
         this.userService = userService;
+        this.cafeLocationRepository = cafeLocationRepository;
     }
 
-
+    //Index is login-page
     @GetMapping("/")
     public String showLogin() {
         return "index";
     }
+
 
     @PostMapping("/")
     public String login(@RequestParam String username,
@@ -37,38 +42,40 @@ public class UserController {
             model.addAttribute("error", "Invalid username or password.");
             return "index";
         }
-        session.setAttribute("loggedInUser", username);
+        session.setAttribute("loggedInUser", user); // ← full User object
         return "redirect:/location";
     }
 
-    @GetMapping("/profile")
-    public String profile(HttpSession session, Model model) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) return "redirect:/";
 
-        model.addAttribute("username", username);
-        return "profile";
-    }
-
-    @PostMapping("/register")
-public String register(@RequestParam String username,
-                       @RequestParam String password,
-                       Model model) {
-    boolean success = userService.register(username, password);
-    if (!success) {
-        model.addAttribute("error", "Username already taken.");
+    //Register-page when you click on register button on login-page
+    @GetMapping("/register")
+    public String showRegister() {
         return "register";
     }
-    return "redirect:/";
-}
 
-@GetMapping("/register")
-public String showRegister() {
-    return "register";
-}
+    //Post request that saves user-data and returns to login-page
+    @PostMapping("/register")
+    public String register(@RequestParam String username,
+                           @RequestParam String password,
+                           Model model) {
+        boolean success = userService.register(username, password);
+        if (!success) {
+            model.addAttribute("error", "Username already taken.");
+            return "register";
+        }
+        return "redirect:/";
+    }
 
-}
+    //Redirects to profile-page <- repurpose for favorite list of logged in user
+    @GetMapping("/profile")
+    public String profile(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) return "redirect:/";
 
-//Hashmap für User benutzen 
-//User eigenschaften gegenspeichern, Sessions mit User-Objekt 
-//Welcher User klickt auf welche bewertung -> normalerweise mit sternebewertung -> User mit Id 1 hat 3 sterne geklickt persistent -> Spring bean um zu welcher User eingeloggt ist -> simuliert spring 
+        List<CafeLocation> favourites = cafeLocationRepository.findByUserAndFavouriteTrue(user);
+
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("favourites", favourites);
+        return "profile";
+    }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sundial: Profile</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-4">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 profile-header">
+                        <h1 class="card-title mb-0">
+                            ☕ Welcome, <span th:text="${username}">User</span>
+                        </h1>
+                        <a href="/location" class="btn btn-primary btn-sm">
+                            📍 Back to the café search
+                        </a>
+                    </div>
+
+                    <h5>Your Favourite Cafés</h5>
+
+                    <!-- No favourites yet -->
+                    <div th:if="${#lists.isEmpty(favourites)}" class="alert alert-info">
+                        You have not saved any favourite cafés yet. 
+                        Go find some sunny spots!
+                    </div>
+
+                    <!-- Favourites table -->
+                    <table th:unless="${#lists.isEmpty(favourites)}"
+                           class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Cloudiness</th>
+                                <th>Status</th>
+                                <th class="text-center">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cafe : ${favourites}">
+                                <td th:text="${cafe.name}"></td>
+                                <td th:text="${cafe.description != null and !cafe.description.isEmpty()} ? ${cafe.description} : 'No description'"></td>
+                                <td th:text="${cafe.cloudiness + '%'}"></td>
+                                <td th:text="${cafe.sunny} ? '☀️ Sunny' : '🌥️ Cloudy'"></td>
+                                <td class="text-center">
+                                    <form th:action="@{/cafes/unfavourite}" method="post">
+                                        <input type="hidden" name="cafeId" th:value="${cafe.id}">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
