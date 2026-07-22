@@ -22,6 +22,7 @@ public class CafeLocation {
     private double longitude;
     private int cloudiness;
     private boolean sunny;
+    private boolean favourite = false;
 
     public CafeLocation() {}
 
@@ -48,4 +49,7 @@ public class CafeLocation {
 
     public boolean isSunny() { return sunny; }
     public void setSunny(boolean sunny) { this.sunny = sunny; }
+
+    public boolean isFavourite() { return favourite; }
+    public void setFavourite(boolean favourite) { this.favourite = favourite; }
 }
