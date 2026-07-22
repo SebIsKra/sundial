@@ -1,14 +1,20 @@
 package com.example.sundial.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cafe_locations")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CafeLocation {
 
     @Id
@@ -22,7 +28,13 @@ public class CafeLocation {
     private double longitude;
     private int cloudiness;
     private boolean sunny;
-    private boolean favourite = false;
+    private String description;
+    private Boolean favourite = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"cafeLocations", "password"})
+    private User user;
 
     public CafeLocation() {}
 
@@ -50,6 +62,12 @@ public class CafeLocation {
     public boolean isSunny() { return sunny; }
     public void setSunny(boolean sunny) { this.sunny = sunny; }
 
-    public boolean isFavourite() { return favourite; }
-    public void setFavourite(boolean favourite) { this.favourite = favourite; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Boolean isFavourite() { return favourite; }
+    public void setFavourite(Boolean favourite) { this.favourite = favourite; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

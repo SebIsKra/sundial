@@ -5,13 +5,13 @@ public class SavedLocation {
     private Long id;
     private double latitude;
     private double longitude;
-    private int rating;
+    private boolean favourite;
 
-    public SavedLocation(Long id, double latitude, double longitude, int rating) {
+    public SavedLocation(Long id, double latitude, double longitude, boolean favourite) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.rating = rating;
+        this.favourite = favourite;
     }
 
     public Long getId() { return id; }
@@ -23,6 +23,6 @@ public class SavedLocation {
     public double getLongitude() { return longitude; }
     public void setLongitude(double longitude) { this.longitude = longitude; }
 
-    public int getRating() { return rating; }
-    public void setRating(int rating) { this.rating = rating; }
+    public boolean isFavourite() { return favourite; }
+    public void setFavourite(boolean favourite) { this.favourite = favourite; }
 }
