@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.sundial.model.CafeLocation;
+import com.example.sundial.model.Cafe;
 import com.example.sundial.model.User;
 import com.example.sundial.model.WeatherResponse;
 import com.example.sundial.repository.CafeLocationRepository;
@@ -26,13 +25,20 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class WeatherController {
 
-    @Value("${weather.api.key}")
-    private String apiKey = "739a05de68ee3b3295f1de09756a422f";
+    private String baseUrl = "https://api.openweathermap.org";
+    private String apiKey="96ae788f4a1c22ba0b688caff214cd92";
 
     private final CafeLocationRepository cafeLocationRepository;
 
     public WeatherController(CafeLocationRepository cafeLocationRepository) {
         this.cafeLocationRepository = cafeLocationRepository;
+    }
+    
+    // add to WeatherController — minimal, test-only hook
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+
     }
 
     // ── Session helper ────────────────────────────────────────
@@ -58,7 +64,7 @@ public class WeatherController {
                              Model model) {
         if (getLoggedInUser(session) == null) return "redirect:/";
 
-        String url = "https://api.openweathermap.org/data/2.5/weather"
+        String url = baseUrl + "/data/2.5/weather"
                    + "?lat=" + lat
                    + "&lon=" + lon
                    + "&units=metric&lang=en&appid=" + apiKey;
@@ -84,7 +90,7 @@ public class WeatherController {
             return Map.of("error", "not logged in");
         }
 
-        String url = "https://api.openweathermap.org/data/2.5/weather"
+        String url = baseUrl + "/data/2.5/weather"
                    + "?lat=" + lat
                    + "&lon=" + lon
                    + "&units=metric&lang=en&appid=" + apiKey;
@@ -105,7 +111,7 @@ public class WeatherController {
 
     @PostMapping("/cafes/check")
     @ResponseBody
-    public List<CafeLocation> checkCafes(@RequestBody List<CafeLocation> cafes,
+    public List<Cafe> checkCafes(@RequestBody List<Cafe> cafes,
                                           HttpSession session) {
         User user = getLoggedInUser(session);
         if (user == null) return List.of();
@@ -113,10 +119,10 @@ public class WeatherController {
         System.out.println(">>> /cafes/check called with "
             + cafes.size() + " cafés for user: " + user.getUsername());
 
-        List<CafeLocation> result = new ArrayList<>();
+        List<Cafe> result = new ArrayList<>();
 
-        for (CafeLocation cafe : cafes) {
-            String url = "https://api.openweathermap.org/data/2.5/weather"
+        for (Cafe cafe : cafes) {
+            String url = baseUrl + "/data/2.5/weather"
                        + "?lat=" + cafe.getLatitude()
                        + "&lon=" + cafe.getLongitude()
                        + "&units=metric&appid=" + apiKey;
@@ -136,7 +142,7 @@ public class WeatherController {
             } catch (Exception e) {
                 System.out.println(">>> Weather call failed for: "
                     + cafe.getName() + " - " + e.getMessage());
-                cafe.setCloudiness(0);
+                cafe.setCloudiness(-1);  // -1 means unknown
                 cafe.setSunny(false);
             }
 
@@ -144,7 +150,7 @@ public class WeatherController {
         }
 
        // Save per user — create new or update changed data
-        for (CafeLocation cafe : result) {
+        for (Cafe cafe : result) {
 
     cafeLocationRepository.findByNameAndLatitudeAndLongitudeAndUser(
             cafe.getName(),
@@ -200,7 +206,7 @@ public class WeatherController {
 
     @PostMapping("/cafes/favourite")
     @ResponseBody
-    public ResponseEntity<Void> toggleFavourite(@RequestBody CafeLocation cafe,
+    public ResponseEntity<Void> toggleFavourite(@RequestBody Cafe cafe,
                                                 HttpSession session) {
         User user = getLoggedInUser(session);
 

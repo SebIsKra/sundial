@@ -28,7 +28,7 @@ public class User{
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CafeLocation> cafeLocations = new ArrayList<>();
+    private List<Cafe> cafeLocations = new ArrayList<>();
 
     public User() {}
 
@@ -61,11 +61,11 @@ public class User{
         this.password = password; 
     }
 
-    public List<CafeLocation> getCafeLocations(){
+    public List<Cafe> getCafeLocations(){
         return cafeLocations; 
     }
 
-    public void setCafeLocations(List<CafeLocation> cafeLocations) {
+    public void setCafeLocations(List<Cafe> cafeLocations) {
         this.cafeLocations = cafeLocations;
     }
 }
