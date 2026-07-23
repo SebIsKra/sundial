@@ -37,6 +37,7 @@
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Cloudiness</th>
+                                <th>Address</th>
                                 <th>Status</th>
                                 <th class="text-center">Remove</th>
                             </tr>
@@ -46,6 +47,7 @@
                                 <td th:text="${cafe.name}"></td>
                                 <td th:text="${cafe.description != null and !cafe.description.isEmpty()} ? ${cafe.description} : 'No description'"></td>
                                 <td th:text="${cafe.cloudiness + '%'}"></td>
+                                 <td th:text="${cafe.address}"></td>
                                 <td th:text="${cafe.sunny} ? '☀️ Sunny' : '🌥️ Cloudy'"></td>
                                 <td class="text-center">
                                     <form th:action="@{/cafes/unfavourite}" method="post">

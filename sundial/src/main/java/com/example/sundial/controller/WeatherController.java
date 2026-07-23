@@ -143,14 +143,58 @@ public class WeatherController {
             result.add(cafe);
         }
 
-        // Save per user — no duplicates
+       // Save per user — create new or update changed data
         for (CafeLocation cafe : result) {
-            if (!cafeLocationRepository.existsByNameAndLatitudeAndLongitudeAndUser(
-                    cafe.getName(), cafe.getLatitude(), cafe.getLongitude(), user)) {
-                cafe.setUser(user);
-                cafeLocationRepository.save(cafe);
-            }
+
+    cafeLocationRepository.findByNameAndLatitudeAndLongitudeAndUser(
+            cafe.getName(),
+            cafe.getLatitude(),
+            cafe.getLongitude(),
+            user
+    ).ifPresentOrElse(existing -> {
+
+        boolean changed = false;
+
+        if (!java.util.Objects.equals(existing.getAddress(), cafe.getAddress())) {
+            existing.setAddress(cafe.getAddress());
+            changed = true;
         }
+
+        if (!java.util.Objects.equals(existing.getDescription(), cafe.getDescription())) {
+            existing.setDescription(cafe.getDescription());
+            changed = true;
+        }
+
+        if (existing.getCloudiness() != cafe.getCloudiness()) {
+            existing.setCloudiness(cafe.getCloudiness());
+            changed = true;
+        }
+
+        if (existing.isSunny() != cafe.isSunny()) {
+            existing.setSunny(cafe.isSunny());
+            changed = true;
+        }
+
+        if (changed) {
+            cafeLocationRepository.save(existing);
+        }
+
+        // return the database version
+        cafe.setId(existing.getId());
+        cafe.setFavourite(existing.isFavourite());
+
+    }, () -> {
+
+        cafe.setUser(user);
+        cafe.setFavourite(false);
+
+        cafeLocationRepository.save(cafe);
+
+    });
+}
+
+
+
 
         System.out.println(">>> Save complete for user: " + user.getUsername());
 
@@ -162,9 +206,12 @@ public class WeatherController {
     @PostMapping("/cafes/favourite")
     @ResponseBody
     public ResponseEntity<Void> toggleFavourite(@RequestBody CafeLocation cafe,
-                                                 HttpSession session) {
+                                                HttpSession session) {
         User user = getLoggedInUser(session);
-        if (user == null) return ResponseEntity.status(401).build();
+
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
 
         cafeLocationRepository.findByNameAndUser(cafe.getName(), user)
             .ifPresent(existing -> {
@@ -174,6 +221,7 @@ public class WeatherController {
 
         return ResponseEntity.ok().build();
     }
+
 
     @PostMapping("/cafes/unfavourite")
     public String unfavourite(@RequestParam Long cafeId,

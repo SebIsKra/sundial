@@ -73,6 +73,6 @@ public class CafeLocation {
     public void setUser(User user) { this.user = user; }
 
     public String getAddress() { return address; }
-    public void setAdress(String address) {this.address = address;}
+    public void setAddress(String address) {this.address = address;}
 
     }

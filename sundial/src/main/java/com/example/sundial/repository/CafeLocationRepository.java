@@ -14,6 +14,12 @@ public interface CafeLocationRepository extends JpaRepository<CafeLocation, Long
     boolean existsByNameAndLatitudeAndLongitudeAndUser(
         String name, double latitude, double longitude, User user);
     Optional<CafeLocation> findByNameAndUser(String name, User user);
+    Optional<CafeLocation> findByNameAndLatitudeAndLongitudeAndUser(
+        String name,
+        double latitude,
+        double longitude,
+        User user
+);
     List<CafeLocation> findByUser(User user);
     List<CafeLocation> findByUserAndFavouriteTrue(User user);
 }
