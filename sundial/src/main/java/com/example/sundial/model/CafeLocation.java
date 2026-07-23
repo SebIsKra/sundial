@@ -21,8 +21,6 @@ public class CafeLocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long overpassId;
-
     @Column(nullable = false)
     private String name;
 
@@ -49,9 +47,6 @@ public class CafeLocation {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
-    public Long getOverpassId() { return overpassId; }
-    public void setOverpassId(Long overpassId) { this.overpassId = overpassId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
