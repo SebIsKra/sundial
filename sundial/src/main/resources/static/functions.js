@@ -102,7 +102,8 @@
                 name:        cafe.tags.name        || "Unnamed Café",
                 description: cafe.tags.description || "A cute café, right?",
                 latitude:    cafe.lat,
-                longitude:   cafe.lon
+                longitude:   cafe.lon,
+                address: getAddress(cafe.tags)
             }));
 
             checkCafesWithBackend(cafes);
@@ -178,6 +179,7 @@
         row.innerHTML = `
             <td><b>${cafe.name}</b></td>
             <td>${cafe.description || "<i class='text-muted'>No description yet</i>"}</td>
+            <td>${cafe.address || "<i>No address available</i>"}</td>
             <td class="text-center">
                 <span id="heart-${index}"
                       onclick="toggleFavourite(${index})"
@@ -238,3 +240,19 @@
             iconAnchor: [8, 8]
         });
     }
+
+    function getAddress(tags) {
+    const parts = [
+        tags["addr:housenumber"],
+        tags["addr:street"],
+        tags["addr:city"],
+        tags["addr:postcode"]
+    ].filter(Boolean);
+
+    // Require street + city
+    if (!tags["addr:street"] || !tags["addr:city"]) {
+        return null;
+    }
+
+    return parts.join(" ");
+}

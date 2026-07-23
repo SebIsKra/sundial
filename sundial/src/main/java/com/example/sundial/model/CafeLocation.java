@@ -29,6 +29,7 @@ public class CafeLocation {
     private int cloudiness;
     private boolean sunny;
     private String description;
+    private String address;
     private Boolean favourite = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,4 +71,8 @@ public class CafeLocation {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
-}
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) {this.address = address;}
+
+    }

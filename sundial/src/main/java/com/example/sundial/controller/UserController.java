@@ -66,16 +66,21 @@ public class UserController {
         return "redirect:/";
     }
 
-    //Redirects to profile-page <- repurpose for favorite list of logged in user
-    @GetMapping("/profile")
-    public String profile(HttpSession session, Model model) {
+    //Redirects to favorites page
+    @GetMapping("/favorites")
+    public String favorites(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) return "redirect:/";
 
-        List<CafeLocation> favourites = cafeLocationRepository.findByUserAndFavouriteTrue(user);
+        if (user == null) {
+            return "redirect:/";
+        }
+
+        List<CafeLocation> favourites =
+                cafeLocationRepository.findByUserAndFavouriteTrue(user);
 
         model.addAttribute("username", user.getUsername());
         model.addAttribute("favourites", favourites);
-        return "profile";
+
+        return "favorites";
     }
 }
