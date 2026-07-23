@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpSession;
 public class WeatherController {
 
     @Value("${weather.api.key}")
-    private String apiKey = "739a05de68ee3b3295f1de09756a422f";
+    private String apiKey = "96ae788f4a1c22ba0b688caff214cd92";
 
     private final CafeLocationRepository cafeLocationRepository;
 
@@ -160,11 +160,6 @@ public class WeatherController {
             changed = true;
         }
 
-        if (!java.util.Objects.equals(existing.getDescription(), cafe.getDescription())) {
-            existing.setDescription(cafe.getDescription());
-            changed = true;
-        }
-
         if (existing.isSunny() != cafe.isSunny()) {
             existing.setSunny(cafe.isSunny());
             changed = true;
@@ -183,7 +178,8 @@ public class WeatherController {
         cafe.setUser(user);
         cafe.setFavourite(false);
 
-        cafeLocationRepository.save(cafe);
+        CafeLocation saved = cafeLocationRepository.save(cafe);
+        cafe.setId(saved.getId());
 
     });
 }
@@ -233,4 +229,38 @@ public class WeatherController {
 
         return "redirect:/favorites";
     }
+
+    // ── Update café description ─────────────────────────────────
+
+    @PostMapping("/cafes/description")
+    @ResponseBody
+    public ResponseEntity<Void> updateDescription(
+            @RequestBody CafeLocation cafe,
+            HttpSession session) {
+
+        User user = getLoggedInUser(session);
+
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+
+        cafeLocationRepository
+            .findByNameAndLatitudeAndLongitudeAndUser(
+                cafe.getName(),
+                cafe.getLatitude(),
+                cafe.getLongitude(),
+                user
+            )
+            .ifPresent(existing -> {
+
+                existing.setDescription(cafe.getDescription());
+
+                cafeLocationRepository.save(existing);
+            });
+
+
+        return ResponseEntity.ok().build();
+    }
 }
+
