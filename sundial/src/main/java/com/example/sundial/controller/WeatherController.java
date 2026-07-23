@@ -25,8 +25,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class WeatherController {
 
-    private String baseUrl = "https://api.openweathermap.org";
-    private String apiKey="96ae788f4a1c22ba0b688caff214cd92";
+    private String apiKey = "";
 
     private final CafeLocationRepository cafeLocationRepository;
 
@@ -166,10 +165,7 @@ public class WeatherController {
             changed = true;
         }
 
-        if (!java.util.Objects.equals(existing.getDescription(), cafe.getDescription())) {
-            existing.setDescription(cafe.getDescription());
-            changed = true;
-        }
+        cafe.setDescription(existing.getDescription());
 
         if (existing.isSunny() != cafe.isSunny()) {
             existing.setSunny(cafe.isSunny());
@@ -183,13 +179,15 @@ public class WeatherController {
         // return the database version
         cafe.setId(existing.getId());
         cafe.setFavourite(existing.isFavourite());
+        cafe.setDescription(existing.getDescription());
 
     }, () -> {
 
         cafe.setUser(user);
         cafe.setFavourite(false);
 
-        cafeLocationRepository.save(cafe);
+        CafeLocation saved = cafeLocationRepository.save(cafe);
+        cafe.setId(saved.getId());
 
     });
 }
@@ -239,4 +237,39 @@ public class WeatherController {
 
         return "redirect:/favorites";
     }
+
+    // ── Update café description ─────────────────────────────────
+
+    @PostMapping("/cafes/description")
+    @ResponseBody
+    public ResponseEntity<Void> updateDescription(
+            @RequestBody CafeLocation cafe,
+            HttpSession session) {
+
+        User user = getLoggedInUser(session);
+
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+
+        cafeLocationRepository
+            .findByNameAndLatitudeAndLongitudeAndUser(
+                cafe.getName(),
+                cafe.getLatitude(),
+                cafe.getLongitude(),
+                user
+            )
+            .ifPresent(existing -> {
+
+                existing.setDescription(cafe.getDescription());
+
+                cafeLocationRepository.save(existing);
+                
+            });
+
+
+        return ResponseEntity.ok().build();
+    }
 }
+

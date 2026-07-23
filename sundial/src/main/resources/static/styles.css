@@ -125,6 +125,10 @@ p, label, td, th {
     box-shadow: 0 4px 12px rgba(107, 63, 42, 0.3);
 }
 
+.btn-edit {
+    background-color: var(--sun-yellow);
+}
+
 .btn-success {
     background-color: var(--soft-green);
     color: #fff;
@@ -206,6 +210,7 @@ p, label, td, th {
     border: none;
     padding: 0.85rem 1rem;
     letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .table tbody tr {
