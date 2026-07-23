@@ -308,8 +308,8 @@ function saveDescription() {
         $("#editDescriptionModal").modal("hide");
 
         renderCafeList(cafeResults);
-
     })
+
     .catch(error => {
         console.error(error);
         alert("Could not save description");

@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpSession;
 public class WeatherController {
 
     @Value("${weather.api.key}")
-    private String apiKey = "96ae788f4a1c22ba0b688caff214cd92";
+    private String apiKey = "";
 
     private final CafeLocationRepository cafeLocationRepository;
 
@@ -257,6 +257,7 @@ public class WeatherController {
                 existing.setDescription(cafe.getDescription());
 
                 cafeLocationRepository.save(existing);
+                
             });
 
 
