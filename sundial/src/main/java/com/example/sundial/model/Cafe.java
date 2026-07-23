@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "cafe_locations")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CafeLocation {
+public class Cafe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +37,9 @@ public class CafeLocation {
     @JsonIgnoreProperties({"cafeLocations", "password"})
     private User user;
 
-    public CafeLocation() {}
+    public Cafe() {}
 
-    public CafeLocation(String name, double latitude, double longitude) {
+    public Cafe(String name, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;

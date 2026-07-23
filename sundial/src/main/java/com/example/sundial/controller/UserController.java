@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.sundial.model.CafeLocation;
+import com.example.sundial.model.Cafe;
 import com.example.sundial.model.User;
 import com.example.sundial.repository.CafeLocationRepository;
 import com.example.sundial.service.UserService;
@@ -75,8 +75,7 @@ public class UserController {
             return "redirect:/";
         }
 
-        List<CafeLocation> favourites =
-                cafeLocationRepository.findByUserAndFavouriteTrue(user);
+        List<Cafe> favourites = cafeLocationRepository.findByUserAndFavouriteTrue(user);
 
         model.addAttribute("username", user.getUsername());
         model.addAttribute("favourites", favourites);
