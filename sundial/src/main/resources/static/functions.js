@@ -103,12 +103,7 @@
                 description: cafe.tags.description || "A cute café, right?",
                 latitude:    cafe.lat,
                 longitude:   cafe.lon,
-                address: [
-                            cafe.tags["addr:housenumber"],
-                            cafe.tags["addr:street"],
-                            cafe.tags["addr:city"],
-                            cafe.tags["addr:postcode"]
-                        ].filter(Boolean).join(" ")
+                address: getAddress(cafe.tags)
             }));
 
             checkCafesWithBackend(cafes);
@@ -245,3 +240,19 @@
             iconAnchor: [8, 8]
         });
     }
+
+    function getAddress(tags) {
+    const parts = [
+        tags["addr:housenumber"],
+        tags["addr:street"],
+        tags["addr:city"],
+        tags["addr:postcode"]
+    ].filter(Boolean);
+
+    // Require street + city
+    if (!tags["addr:street"] || !tags["addr:city"]) {
+        return null;
+    }
+
+    return parts.join(" ");
+}
