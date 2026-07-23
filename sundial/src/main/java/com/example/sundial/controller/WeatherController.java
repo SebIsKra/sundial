@@ -26,7 +26,6 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class WeatherController {
 
-    @Value("${weather.api.key}")
     private String apiKey = "";
 
     private final CafeLocationRepository cafeLocationRepository;
@@ -160,6 +159,8 @@ public class WeatherController {
             changed = true;
         }
 
+        cafe.setDescription(existing.getDescription());
+
         if (existing.isSunny() != cafe.isSunny()) {
             existing.setSunny(cafe.isSunny());
             changed = true;
@@ -172,6 +173,7 @@ public class WeatherController {
         // return the database version
         cafe.setId(existing.getId());
         cafe.setFavourite(existing.isFavourite());
+        cafe.setDescription(existing.getDescription());
 
     }, () -> {
 
