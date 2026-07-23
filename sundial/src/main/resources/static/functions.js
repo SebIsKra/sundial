@@ -190,7 +190,7 @@
                 </span>
             </td>
             <td>${cafe.sunny ? "☀️ Sunny" : "🌥️ Cloudy"}</td>
-            <td class="text-center"><button class="btn btn-sm btn-primary" onclick="openEditPopup(${cafe.id})"> ✏️ </button></td>
+            <td class="text-center"><button class="btn btn-sm btn-edit" onclick="openEditPopup(${cafe.id})"> ✏️ </button></td>
 
         `;
         container.appendChild(row);
