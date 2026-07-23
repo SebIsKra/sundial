@@ -19,7 +19,11 @@ public interface CafeLocationRepository extends JpaRepository<CafeLocation, Long
         double latitude,
         double longitude,
         User user
-);
+    );
     List<CafeLocation> findByUser(User user);
     List<CafeLocation> findByUserAndFavouriteTrue(User user);
+    Optional<CafeLocation> findByOverpassIdAndUser(
+        Long overpassId,
+        User user
+    );
 }

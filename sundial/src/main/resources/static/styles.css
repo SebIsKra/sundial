@@ -206,6 +206,7 @@ p, label, td, th {
     border: none;
     padding: 0.85rem 1rem;
     letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .table tbody tr {
