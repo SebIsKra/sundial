@@ -102,7 +102,13 @@
                 name:        cafe.tags.name        || "Unnamed Café",
                 description: cafe.tags.description || "A cute café, right?",
                 latitude:    cafe.lat,
-                longitude:   cafe.lon
+                longitude:   cafe.lon,
+                address: [
+                            cafe.tags["addr:housenumber"],
+                            cafe.tags["addr:street"],
+                            cafe.tags["addr:city"],
+                            cafe.tags["addr:postcode"]
+                        ].filter(Boolean).join(" ")
             }));
 
             checkCafesWithBackend(cafes);
@@ -178,6 +184,7 @@
         row.innerHTML = `
             <td><b>${cafe.name}</b></td>
             <td>${cafe.description || "<i class='text-muted'>No description yet</i>"}</td>
+            <td>${cafe.address || "<i>No address available</i>"}</td>
             <td class="text-center">
                 <span id="heart-${index}"
                       onclick="toggleFavourite(${index})"
