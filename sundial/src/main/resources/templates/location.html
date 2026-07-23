@@ -79,8 +79,9 @@
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Address</th>
-                                    <th class="text-center">Favourite</th>
+                                    <th>Favourite</th>
                                     <th>Sun Status</th>
+                                    <th>Edit</th>
                                 </tr>
                             </thead>
                             <tbody id="cafeList"></tbody>
@@ -92,6 +93,53 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Description Popup -->
+<div class="modal fade" id="editDescriptionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Café Description</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="editCafeId">
+
+                <label>Café Name</label>
+                <input type="text"
+                       id="editCafeName"
+                       class="form-control mb-3"
+                       readonly>
+
+                <label>Description</label>
+                <textarea id="editCafeDescription"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Write a description..."></textarea>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary"
+                        data-dismiss="modal">
+                    Cancel
+                </button>
+
+                <button class="btn btn-primary"
+                        onclick="saveDescription()">
+                    Save
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

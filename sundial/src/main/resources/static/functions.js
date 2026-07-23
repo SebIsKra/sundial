@@ -1,5 +1,6 @@
  let map;
     let cafeResults = [];
+    let editingCafeId = null;
 
     function getLocation() {
         if (!navigator.geolocation) {
@@ -100,7 +101,7 @@
 
             const cafes = data.elements.map(cafe => ({
                 name:        cafe.tags.name        || "Unnamed Café",
-                description: cafe.tags.description || "A cute café, right?",
+                description: "",
                 latitude:    cafe.lat,
                 longitude:   cafe.lon,
                 address: getAddress(cafe.tags)
@@ -114,11 +115,11 @@
 
             // Fall back to mock data automatically
             const mockCafes = [
-                { name: "Café Einstein Stammhaus", latitude: lat + 0.005, longitude: lon + 0.005, description: "A cute café, right?" },
-                { name: "The Barn Coffee Roasters", latitude: lat - 0.003, longitude: lon + 0.008, description: "A cute café, right?" },
-                { name: "Bonanza Coffee",           latitude: lat + 0.008, longitude: lon - 0.004, description: "A cute café, right?" },
-                { name: "Five Elephant",            latitude: lat - 0.006, longitude: lon - 0.006, description: "A cute café, right?" },
-                { name: "Café Himmelblau",          latitude: lat + 0.010, longitude: lon + 0.002, description: "A cute café, right?" }
+                { name: "Café Einstein Stammhaus", latitude: lat + 0.005, longitude: lon + 0.005, description: "" },
+                { name: "The Barn Coffee Roasters", latitude: lat - 0.003, longitude: lon + 0.008, description: "" },
+                { name: "Bonanza Coffee",           latitude: lat + 0.008, longitude: lon - 0.004, description: "" },
+                { name: "Five Elephant",            latitude: lat - 0.006, longitude: lon - 0.006, description: "" },
+                { name: "Café Himmelblau",          latitude: lat + 0.010, longitude: lon + 0.002, description: ""}
             ];
 
             document.getElementById("loadingMsg").textContent =
@@ -189,6 +190,8 @@
                 </span>
             </td>
             <td>${cafe.sunny ? "☀️ Sunny" : "🌥️ Cloudy"}</td>
+            <td class="text-center"><button class="btn btn-sm btn-edit" onclick="openEditPopup(${cafe.id})"> ✏️ </button></td>
+
         `;
         container.appendChild(row);
     });
@@ -255,4 +258,63 @@
     }
 
     return parts.join(" ");
+    }
+
+    function openEditPopup(cafeId) {
+
+    editingCafeId = cafeId;
+
+    const cafe = cafeResults.find(c => c.id == cafeId);
+
+    if (!cafe) {
+        console.error("Cafe not found:", cafeId);
+        return;
+    }
+
+    document.getElementById("editCafeId").value = cafe.id;
+    document.getElementById("editCafeName").value = cafe.name;
+    document.getElementById("editCafeDescription").value =
+        cafe.description || "";
+
+    $("#editDescriptionModal").modal("show");
 }
+
+
+function saveDescription() {
+
+    const cafe = cafeResults.find(c => c.id == editingCafeId);
+
+    if (!cafe) {
+        return;
+    }
+
+    cafe.description =
+        document.getElementById("editCafeDescription").value;
+
+
+    fetch("/cafes/description", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(cafe)
+    })
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Save failed");
+        }
+
+        $("#editDescriptionModal").modal("hide");
+
+        renderCafeList(cafeResults);
+    })
+
+    .catch(error => {
+        console.error(error);
+        alert("Could not save description");
+    });
+}
+
+
+   
