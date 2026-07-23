@@ -165,11 +165,6 @@ public class WeatherController {
             changed = true;
         }
 
-        if (existing.getCloudiness() != cafe.getCloudiness()) {
-            existing.setCloudiness(cafe.getCloudiness());
-            changed = true;
-        }
-
         if (existing.isSunny() != cafe.isSunny()) {
             existing.setSunny(cafe.isSunny());
             changed = true;
@@ -236,6 +231,6 @@ public class WeatherController {
             }
         });
 
-        return "redirect:/profile";
+        return "redirect:/favorites";
     }
 }

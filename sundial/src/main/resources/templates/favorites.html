@@ -45,9 +45,13 @@
                         <tbody>
                             <tr th:each="cafe : ${favourites}">
                                 <td th:text="${cafe.name}"></td>
-                                <td th:text="${cafe.description != null and !cafe.description.isEmpty()} ? ${cafe.description} : 'No description'"></td>
+                                <td><span th:if="${cafe.description != null and !cafe.description.isEmpty()}" th:text="${cafe.description}"></span>
+                                    <i th:unless="${cafe.description != null and !cafe.description.isEmpty()}">No description available</i>
+                                </td>
                                 <td th:text="${cafe.cloudiness + '%'}"></td>
-                                 <td th:text="${cafe.address}"></td>
+                                <td><span th:if="${cafe.address != null and !cafe.address.isEmpty()}" th:text="${cafe.address}"></span>
+                                    <i th:unless="${cafe.address != null and !cafe.address.isEmpty()}">No address available</i>
+                                </td>
                                 <td th:text="${cafe.sunny} ? '☀️ Sunny' : '🌥️ Cloudy'"></td>
                                 <td class="text-center">
                                     <form th:action="@{/cafes/unfavourite}" method="post">
