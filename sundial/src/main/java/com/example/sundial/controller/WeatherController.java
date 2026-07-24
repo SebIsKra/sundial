@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class WeatherController {
 
+    private String baseUrl = "https://api.openweathermap.org";
     private String apiKey = "";
 
     private final CafeLocationRepository cafeLocationRepository;
@@ -186,7 +187,7 @@ public class WeatherController {
         cafe.setUser(user);
         cafe.setFavourite(false);
 
-        CafeLocation saved = cafeLocationRepository.save(cafe);
+        Cafe saved = cafeLocationRepository.save(cafe);
         cafe.setId(saved.getId());
 
     });
@@ -243,7 +244,7 @@ public class WeatherController {
     @PostMapping("/cafes/description")
     @ResponseBody
     public ResponseEntity<Void> updateDescription(
-            @RequestBody CafeLocation cafe,
+            @RequestBody Cafe cafe,
             HttpSession session) {
 
         User user = getLoggedInUser(session);

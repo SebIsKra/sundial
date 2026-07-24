@@ -64,7 +64,6 @@
 
         <!-- ================= TEST ================= -->
 
-        <!-- JUnit 5, Mockito, AssertJ, Spring Test, MockMvc -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -72,7 +71,6 @@
         </dependency>
 
         <!-- WireMock -->
-        <!-- was: artifactId=wiremock -->
 		<dependency>
 			<groupId>org.wiremock</groupId>
 			<artifactId>wiremock-standalone</artifactId>
@@ -87,7 +85,6 @@
             <scope>test</scope>
         </dependency>
 
-		<!-- @WebMvcTest slice (Spring Boot 4 modular test module) -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-webmvc-test</artifactId>
@@ -100,7 +97,37 @@
     <artifactId>spring-boot-data-jpa-test</artifactId>
     <scope>test</scope>
 </dependency>
+<!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.22.1</version>
+    <scope>compile</scope>
+</dependency>
+<!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-core</artifactId>
+    <version>2.22.1</version>
+    <scope>compile</scope>
+</dependency>
+<!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-all</artifactId>
+    <version>1.10.19</version>
+    <scope>test</scope>
+</dependency>
+<!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>7.0.8</version>
+    <scope>compile</scope>
+</dependency>
+
     </dependencies>
+
 
     <build>
         <plugins>
