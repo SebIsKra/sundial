@@ -49,7 +49,7 @@ class WeatherResponseTest {
                 {
                   "name": "Berlin",
                   "weather": [
-                    { "id": 800, "description": "clear sky" }
+                    { "id": 800, "desc": "clear sky" }
                   ],
                   "main": { "temp": 21.5 },
                   "clouds": { "all": 5 }
